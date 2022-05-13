@@ -36,3 +36,18 @@ class ruleActiceCusForm(forms.Form):
     excel = forms.BooleanField(label='excel',required=False)
     club = forms.BooleanField(label='club',required=False)
 
+class ruleVisitorCoverageForm(forms.Form):
+    rulekey = 'Rule3.VC'
+    gemChoices = clubGetRuleParams(rulekey,'gem')
+    scoreChoices = clubGetRuleParams(rulekey,'score')
+  #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
+   # gemb10 = forms.ChoiceField(label='gemb10',choices= gemChoices)
+    scoreb10 = forms.ChoiceField(label='scoreb10', choices= scoreChoices)
+    gemb1020 = forms.ChoiceField(label='gemb1020',choices= gemChoices)
+    scoreb1020 = forms.ChoiceField(label='scoreb1020', choices= scoreChoices)
+    gemb2040 = forms.ChoiceField(label='gemb2040',choices= gemChoices)
+    scoreb2040 = forms.ChoiceField(label='scoreb2040', choices= scoreChoices)
+    gemu40 = forms.ChoiceField(label='gemu40',choices= gemChoices)
+    scoreu40 = forms.ChoiceField(label='scoreu40', choices= scoreChoices)
+    excel = forms.BooleanField(label='excel',required=False)
+    club = forms.BooleanField(label='club',required=False)

@@ -9,7 +9,7 @@ from django.shortcuts import render
 import requests
 from agent.models import Ocrd, Vwcustomerclub, NewCustomer, Oslp, OcrdOslp, VwagentActiveCustomerPerVisitor, Ordr, \
     Vwvisitorsku, Rules
-from .forms import ruleActiceCusForm
+from .forms import ruleActiceCusForm, ruleVisitorCoverageForm
 
 connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "B1-Burux")
 conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reports")
@@ -316,3 +316,10 @@ def pageRuleVC2(request):
     elif request.method == 'POST':
        return(logicVisitorAvticeCus(request))
 
+def pageRuleVC3(request):
+    rulekey = 'Rule3.VC'
+    form = ruleVisitorCoverageForm
+    if request.method == 'GET':
+        return render(request, 'agent/index-2.html', {'form': form})
+    elif request.method == 'POST':
+       return(logicVisitorAvticeCus(request))
