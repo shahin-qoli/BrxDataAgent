@@ -29,7 +29,7 @@ class Ordr(models.Model):
     oslp = models.ForeignKey(Oslp, on_delete=models.CASCADE)
     docdate = models.DateField()
 
-##table for CC, rule1 and rule 2
+##table for CC, rule2 and rule 3
 class VwAgentPurchaseFrequencyCClub(models.Model):
     bpcode = models.CharField(max_length=200)
     ocrd = models.ForeignKey(Ocrd, on_delete=models.CASCADE)
@@ -39,6 +39,21 @@ class VwAgentPurchaseFrequencyCClub(models.Model):
     countinvoice = models.IntegerField()
     countinvoice7Mtoup = models.IntegerField()
     countinvoicebetween5to7M = models.IntegerField()
+
+    def __str__(self):
+        return self.cardcode
+
+
+##table for CC, rule1
+class VwAgentSKUCustomerClub(models.Model):
+    bpcode = models.CharField(max_length=200)
+    ocrd = models.ForeignKey(Ocrd, on_delete=models.CASCADE)
+    quarternum = models.IntegerField()
+    year = models.IntegerField()
+    totalprice = models.DecimalField()
+    countofsku = models.IntegerField()
+    countofsku500k = models.IntegerField()
+
 
     def __str__(self):
         return self.cardcode

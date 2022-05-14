@@ -8,8 +8,8 @@ from django.http import HttpResponse
 from django.shortcuts import render
 import requests
 from agent.models import Ocrd, Vwcustomerclub, NewCustomer, Oslp, OcrdOslp, VwagentActiveCustomerPerVisitor, Ordr, \
-    Vwvisitorsku, Rules
-from .forms import ruleActiceCusForm, ruleVisitorCoverageForm
+    Vwvisitorsku, Rules,VwAgentSKUCustomerClub,VwAgentPurchaseFrequencyCClub
+from .forms import ruleActiceCusForm, ruleVisitorCoverageForm, ruleCustomerSKUCount
 
 connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "B1-Burux")
 conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reports")
@@ -87,6 +87,18 @@ def initVwAgentPurchaseFrequencyCClub(request):
         pass
 
 
+def initVwAgentSKUCustomerClub(request):
+    if request.method == 'GET':
+        cursor = conncetReport.cursor()
+        OcrdOslp.objects.all().delete()
+        sql = "SELECT CardCode,QuarterNum, [Year], Totalprice, CountOfSKU,CountOfSKU500K from Burux.VwAgentSKUCustomerClub where [Year] = 1400 and QuarterNum = 4"
+        cursor.execute(sql)
+        for bp in cursor:
+            ocrd = Ocrd.objects.filter(bpcode=bp[0]).values('id')
+            Vwcustomerclub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
+                                          countofsku=bp[4], countofsku500k=bp[5], ocrd_id=ocrd)
+    else:
+        pass
 
 def initVwcustomerclub(request):
     if request.method == 'GET':
@@ -164,12 +176,13 @@ def clubUserAchivementCreate(rulekey, parameterkey, userid):
     res = requests.post(apiUrlUserAchivementCreate, bodygem)
 
 
+"""
 def clubUserAchivementCreateScore(rulekey, userid, countscore):
     bodyscore = {"Ruleid": rulekey, "ParameterKey": "score", "Count": countscore,
                  "UserId": userid,
                  "DateTime": datetime.now(), "CustomParameter": []}
     res = requests.post(apiUrlUserAchivementCreate, bodyscore)
-
+"""
 
 def logicTry(request, rulekey):
     if request.method == 'GET':
@@ -178,7 +191,8 @@ def logicTry(request, rulekey):
     #       return render(request, 'agent/index-2.html', {'form': form,'message':"salam"})
     elif request.method == 'POST':
         if request.POST['rulekey'] == 'VisitorCustomerCoverage':
-            return (logicVisitorCusCoverage(request))
+            pass
+  #          return (logicVisitorCusCoverage(request))
         elif request.POST['rulekey'] == 'VisitorAvticeCustomer':
             return (logicVisitorAvticeCus(request))
         #      elif request.POST['rulekey'] == 'VisitorNewCustomer':
@@ -187,7 +201,7 @@ def logicTry(request, rulekey):
             return (logicVisitorInvSkuCount(request))
 
 
-def logicVisitorCusCoverage(request):
+"""def logicVisitorCusCoverage(request):
     rulekey = request.POST['rulekey']
     basegem = request.POST['gem']
     basescore = request.POST['score']
@@ -213,7 +227,7 @@ def logicVisitorCusCoverage(request):
         return (exportUserAchivement(request, datalist))
 
 
-"""   
+   
 def renderRuleFormWoutDate(request):
     if request.method == "GET":
         form = ruleWoDate()
@@ -267,6 +281,65 @@ def logicVisitorNewCus(request):
         return (exportUserAchivement(request, datalist))
 
 """
+#Rule2.CC
+def logicCustomerVolumePurchase(request):
+    rulekey = 'Rule2.CC'
+    basescore = request.POST['score']
+    datalist = []
+    bpq = VwAgentPurchaseFrequencyCClub.objects.all()
+    for bp in bpq:
+        quanof1MT = bp.totalprice/10000000
+        for i in range(quanof1MT):
+          if request.POST.__contains__('club'):
+              clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
+          elif request.POST.__contains__('excel'):
+              data = (rulekey, bp.bpcode, basescore)
+              datalist.append(data)
+
+    if request.POST.__contains__('excel'):
+        return (exportUserAchivement(request, datalist))
+
+#Rule3.CC
+def logicCustomerFrequencyPurchase(request):
+    rulekey = 'Rule3.CC'
+    basescoreup7m = request.POST['scoreup7m']
+    basescoreup4to7m = request.POST['scoreup4to7m']
+    datalist = []
+    bpq = VwAgentPurchaseFrequencyCClub.objects.all()
+    for bp in bpq:
+        for i in range(bp.countinvoice7Mtoup):
+          if request.POST.__contains__('club'):
+              clubUserAchivementCreate(rulekey, basescoreup7m, bp.bpcode)
+          elif request.POST.__contains__('excel'):
+              data = (rulekey, bp.bpcode, basescoreup7m)
+              datalist.append(data)
+        for i in range(bp.countinvoicebetween5to7M):
+          if request.POST.__contains__('club'):
+              clubUserAchivementCreate(rulekey, basescoreup4to7m, bp.bpcode)
+          elif request.POST.__contains__('excel'):
+              data = (rulekey, bp.bpcode, basescoreup4to7m)
+              datalist.append(data)
+
+    if request.POST.__contains__('excel'):
+        return (exportUserAchivement(request, datalist))
+
+
+#Rule1.CC quan of inv line
+def logicCustomerSKUCount(request):
+    rulekey = 'Rule1.CC'
+    basescore = request.POST['score']
+    datalist = []
+    bpq = VwAgentSKUCustomerClub.objects.all()
+    for bp in bpq:
+        for i in range(bp.countofsku500k):
+          if request.POST.__contains__('club'):
+              clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
+          elif request.POST.__contains__('excel'):
+              data = (rulekey, bp.bpcode, basescore)
+              datalist.append(data)
+
+    if request.POST.__contains__('excel'):
+        return (exportUserAchivement(request, datalist))
 
 
 #
@@ -280,8 +353,8 @@ def logicVisitorInvSkuCount(request):
         gemcount = vis.countuniquesku * basegem
         scorecount = vis.countuniquesku * basescore
         if request.POST.__contains__('club'):
-            clubUserAchivementCreateGem(rulekey, vis.slpcode, gemcount)
-            clubUserAchivementCreateScore(rulekey, vis.slpcode, scorecount)
+            clubUserAchivementCreate(rulekey, vis.slpcode, gemcount)
+ #           clubUserAchivementCreateScore(rulekey, vis.slpcode, scorecount)
         elif request.POST.__contains__('excel'):
             data = (rulekey, vis.slpcode, gemcount, scorecount)
             datalist.append(data)
@@ -337,5 +410,14 @@ def pageRuleVC3(request):
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
     elif request.method == 'POST':
-       return(logicVisitorCusCoverage(request))
+        pass
+ #      return(logicVisitorCusCoverage(request))
 
+
+def pageRuleCC1(request):
+    rulekey = 'Rule1.CC'
+    form = ruleCustomerSKUCount
+    if request.method == 'GET':
+        return render(request, 'agent/index-2.html', {'form': form})
+    elif request.method == 'POST':
+       return(logicVisitorAvticeCus(request))

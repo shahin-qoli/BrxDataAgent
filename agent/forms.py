@@ -51,3 +51,36 @@ class ruleVisitorCoverageForm(forms.Form):
     scoreu40 = forms.ChoiceField(label='scoreu40', choices= scoreChoices)
     excel = forms.BooleanField(label='excel',required=False)
     club = forms.BooleanField(label='club',required=False)
+
+#'Rule1.CC'
+class ruleCustomerSKUCount(forms.Form):
+    rulekey = 'Rule1.CC'
+    scoreChoices = clubGetRuleParams(rulekey,'score')
+  #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
+   # gemb10 = forms.ChoiceField(label='gemb10',choices= gemChoices)
+    score = forms.ChoiceField(label='score', choices= scoreChoices)
+    excel = forms.BooleanField(label='excel',required=False)
+    club = forms.BooleanField(label='club',required=False)
+
+
+#'Rule2.CC'
+class ruleCustomerSKUCount(forms.Form):
+    rulekey = 'Rule2.CC'
+    scoreChoices = clubGetRuleParams(rulekey,'score')
+  #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
+   # gemb10 = forms.ChoiceField(label='gemb10',choices= gemChoices)
+    score = forms.ChoiceField(label='score', choices= scoreChoices)
+    excel = forms.BooleanField(label='excel',required=False)
+    club = forms.BooleanField(label='club',required=False)
+
+
+#'Rule3.CC'
+class ruleCustomerSKUCount(forms.Form):
+    rulekey = 'Rule3.CC'
+    scoreChoices = clubGetRuleParams(rulekey,'score')
+  #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
+   # gemb10 = forms.ChoiceField(label='gemb10',choices= gemChoices)
+    scoreup7m = forms.ChoiceField(label='scoreup7m', choices= scoreChoices)
+    scoreup4to7m = forms.ChoiceField(label='scoreup4to7m', choices= scoreChoices)
+    excel = forms.BooleanField(label='excel',required=False)
+    club = forms.BooleanField(label='club',required=False)
