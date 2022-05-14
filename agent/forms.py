@@ -35,6 +35,8 @@ class ruleActiceCusForm(forms.Form):
     score = forms.ChoiceField(label='score', choices= scoreChoices)
     excel = forms.BooleanField(label='excel',required=False)
     club = forms.BooleanField(label='club',required=False)
+    rulekey = forms.CharField(label='rulekey')
+
 
 class ruleVisitorCoverageForm(forms.Form):
     rulekey = 'Rule3.VC'
@@ -61,7 +63,7 @@ class ruleCustomerSKUCount(forms.Form):
     score = forms.ChoiceField(label='score', choices= scoreChoices)
     excel = forms.BooleanField(label='excel',required=False)
     club = forms.BooleanField(label='club',required=False)
-
+    rulekey = forms.CharField(label='rulekey')
 
 #'Rule2.CC'
 class ruleCustomerVolumePurchase(forms.Form):
@@ -72,7 +74,7 @@ class ruleCustomerVolumePurchase(forms.Form):
     score = forms.ChoiceField(label='score', choices= scoreChoices)
     excel = forms.BooleanField(label='excel',required=False)
     club = forms.BooleanField(label='club',required=False)
-
+    rulekey = forms.CharField(label='rulekey')
 
 #'Rule3.CC'
 class ruleCustomerFrequencyPurchase(forms.Form):
@@ -80,6 +82,7 @@ class ruleCustomerFrequencyPurchase(forms.Form):
     scoreChoices = clubGetRuleParams(rulekey,'score')
   #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
    # gemb10 = forms.ChoiceField(label='gemb10',choices= gemChoices)
+    rulekey = forms.CharField(label='rulekey',show_hidden_initial= False)
     scoreup7m = forms.ChoiceField(label='scoreup7m', choices= scoreChoices)
     scoreup4to7m = forms.ChoiceField(label='scoreup4to7m', choices= scoreChoices)
     excel = forms.BooleanField(label='excel',required=False)

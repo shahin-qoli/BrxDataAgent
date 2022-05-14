@@ -184,21 +184,13 @@ def clubUserAchivementCreateScore(rulekey, userid, countscore):
     res = requests.post(apiUrlUserAchivementCreate, bodyscore)
 """
 
-def logicTry(request, rulekey):
-#    if request.method == 'GET':
-#        if rulekey == "Rule1-VC":
-#            pass
-    #       return render(request, 'agent/index-2.html', {'form': form,'message':"salam"})
-    if request.method == 'POST':
-        if request.POST['rulekey'] == 'VisitorCustomerCoverage':
-            pass
-  #          return (logicVisitorCusCoverage(request))
-        elif request.POST['rulekey'] == 'VisitorAvticeCustomer':
-            return (logicVisitorAvticeCus(request))
-        #      elif request.POST['rulekey'] == 'VisitorNewCustomer':
-        #           return(logicVisitorNewCus(request))
-        elif request.POST['rulekey'] == 'VisitorInvoiceSkuCount':
-            return (logicVisitorInvSkuCount(request))
+def logicTry(request):
+        if request.POST['rulekey'] == 'Rule1.CC':
+            return (logicCustomerSKUCount(request))
+        elif request.POST['rulekey'] == 'Rule2.CC':
+            return (logicCustomerVolumePurchase(request))
+        elif request.POST['rulekey'] == 'Rule3.CC':
+            return (logicCustomerFrequencyPurchase(request))
 
 
 """def logicVisitorCusCoverage(request):
@@ -398,14 +390,14 @@ def pageIndex(request):
 
 def pageRuleVC2(request):
     rulekey = 'Rule2.VC'
-    form = ruleActiceCusForm
+    form = ruleActiceCusForm(initial ={"rulekey": rulekey })
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
 
 
 def pageRuleVC3(request):
     rulekey = 'Rule3.VC'
-    form = ruleVisitorCoverageForm
+    form = ruleVisitorCoverageForm(initial ={"rulekey": rulekey })
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
 
@@ -413,19 +405,22 @@ def pageRuleVC3(request):
 
 def pageRuleCC1(request):
     rulekey = 'Rule1.CC'
-    form = ruleCustomerSKUCount
+    message = 'شما در حال محاسبه قانون خط فاکتور برای مشتری هستید'
+    form = ruleCustomerSKUCount(initial ={"rulekey": rulekey, "message": message })
     if request.method == 'GET':
-        return render(request, 'agent/index-2.html', {'form': form})
+        return render(request, 'agent/index-2.html', {'form': form, "message": message})
 
 
 def pageRuleCC2(request):
     rulekey = 'Rule2.CC'
-    form = ruleCustomerVolumePurchase
+    message = 'شما در حال محاسبه قانون حجم خرید برای مشتری هستید'
+    form = ruleCustomerVolumePurchase(initial ={"rulekey": rulekey, "message": message })
     if request.method == 'GET':
-        return render(request, 'agent/index-2.html', {'form': form})
+        return render(request, 'agent/index-2.html', {'form': form, "message": message})
 
 def pageRuleCC3(request):
     rulekey = 'Rule3.CC'
-    form = ruleCustomerFrequencyPurchase
+    message = 'شما در حال محاسبه قانون استمرار خرید برای مشتری هستید'
+    form = ruleCustomerFrequencyPurchase(initial ={"rulekey": rulekey })
     if request.method == 'GET':
-        return render(request, 'agent/index-2.html', {'form': form})
+        return render(request, 'agent/index-2.html', {'form': form, "message": message})

@@ -16,6 +16,7 @@ urlpatterns = [
     path('init/ocrdoslp', views.initOcrdOslp, name='initocrdoslp'),
     path('handle/newcustomer', views.handleNewCustomer, name='handlenewcustomer'),
 #    path('logic/try/<str:rulekey>/', views.logicTry, name='logicTry'),
+    path('logic/try', views.logicTry, name='logicTry'),
     path('logic/try/visitoractivecustomer', views.pageRuleVC2, name='logicTryActiveCustomer'),
     path('logic/try/visitorcuscoverage', views.pageRuleVC3, name='logicTryVisitorCusCoverage'),
     path('logic/try/customerskucount', views.pageRuleCC1, name='logicTryCustomerSKUCount'),

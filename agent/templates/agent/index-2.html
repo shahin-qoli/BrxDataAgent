@@ -5,9 +5,10 @@
     <title>Title</title>
 </head>
 <body>
-<form action="{% url 'agent:logicTryActiveCustomer' %}" method="post">
-    {% csrf_token %}
     <p>{{ message }}</p>
+<form action="{% url 'agent:logicTry' %}" method="post">
+    {% csrf_token %}
+
     {{ form.as_ul }}
     <input type="submit" value="Submit">
 </form>
