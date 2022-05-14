@@ -35,7 +35,7 @@ class VwAgentPurchaseFrequencyCClub(models.Model):
     ocrd = models.ForeignKey(Ocrd, on_delete=models.CASCADE)
     quarternum = models.IntegerField()
     year = models.IntegerField()
-    totalprice = models.DecimalField()
+    totalprice = models.DecimalField(max_digits=200,decimal_places=0)
     countinvoice = models.IntegerField()
     countinvoice7Mtoup = models.IntegerField()
     countinvoicebetween5to7M = models.IntegerField()
@@ -50,7 +50,7 @@ class VwAgentSKUCustomerClub(models.Model):
     ocrd = models.ForeignKey(Ocrd, on_delete=models.CASCADE)
     quarternum = models.IntegerField()
     year = models.IntegerField()
-    totalprice = models.DecimalField()
+    totalprice = models.DecimalField(max_digits=200,decimal_places=0)
     countofsku = models.IntegerField()
     countofsku500k = models.IntegerField()
 

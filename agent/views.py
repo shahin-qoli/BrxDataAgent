@@ -9,7 +9,7 @@ from django.shortcuts import render
 import requests
 from agent.models import Ocrd, Vwcustomerclub, NewCustomer, Oslp, OcrdOslp, VwagentActiveCustomerPerVisitor, Ordr, \
     Vwvisitorsku, Rules,VwAgentSKUCustomerClub,VwAgentPurchaseFrequencyCClub
-from .forms import ruleActiceCusForm, ruleVisitorCoverageForm, ruleCustomerSKUCount
+from .forms import ruleActiceCusForm, ruleVisitorCoverageForm, ruleCustomerSKUCount, ruleCustomerVolumePurchase, ruleCustomerFrequencyPurchase
 
 connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "B1-Burux")
 conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reports")
@@ -185,11 +185,11 @@ def clubUserAchivementCreateScore(rulekey, userid, countscore):
 """
 
 def logicTry(request, rulekey):
-    if request.method == 'GET':
-        if rulekey == "Rule1-VC":
-            pass
+#    if request.method == 'GET':
+#        if rulekey == "Rule1-VC":
+#            pass
     #       return render(request, 'agent/index-2.html', {'form': form,'message':"salam"})
-    elif request.method == 'POST':
+    if request.method == 'POST':
         if request.POST['rulekey'] == 'VisitorCustomerCoverage':
             pass
   #          return (logicVisitorCusCoverage(request))
@@ -401,17 +401,14 @@ def pageRuleVC2(request):
     form = ruleActiceCusForm
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
-    elif request.method == 'POST':
-       return(logicVisitorAvticeCus(request))
+
 
 def pageRuleVC3(request):
     rulekey = 'Rule3.VC'
     form = ruleVisitorCoverageForm
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
-    elif request.method == 'POST':
-        pass
- #      return(logicVisitorCusCoverage(request))
+
 
 
 def pageRuleCC1(request):
@@ -419,5 +416,16 @@ def pageRuleCC1(request):
     form = ruleCustomerSKUCount
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
-    elif request.method == 'POST':
-       return(logicVisitorAvticeCus(request))
+
+
+def pageRuleCC2(request):
+    rulekey = 'Rule2.CC'
+    form = ruleCustomerVolumePurchase
+    if request.method == 'GET':
+        return render(request, 'agent/index-2.html', {'form': form})
+
+def pageRuleCC3(request):
+    rulekey = 'Rule3.CC'
+    form = ruleCustomerFrequencyPurchase
+    if request.method == 'GET':
+        return render(request, 'agent/index-2.html', {'form': form})

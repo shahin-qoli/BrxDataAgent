@@ -64,7 +64,7 @@ class ruleCustomerSKUCount(forms.Form):
 
 
 #'Rule2.CC'
-class ruleCustomerSKUCount(forms.Form):
+class ruleCustomerVolumePurchase(forms.Form):
     rulekey = 'Rule2.CC'
     scoreChoices = clubGetRuleParams(rulekey,'score')
   #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
@@ -75,7 +75,7 @@ class ruleCustomerSKUCount(forms.Form):
 
 
 #'Rule3.CC'
-class ruleCustomerSKUCount(forms.Form):
+class ruleCustomerFrequencyPurchase(forms.Form):
     rulekey = 'Rule3.CC'
     scoreChoices = clubGetRuleParams(rulekey,'score')
   #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
