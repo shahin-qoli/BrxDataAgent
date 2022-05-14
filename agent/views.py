@@ -81,8 +81,8 @@ def initVwAgentPurchaseFrequencyCClub(request):
         cursor.execute(sql)
         for bp in cursor:
             ocrd = Ocrd.objects.filter(bpcode=bp[0]).values('id')
-            Vwcustomerclub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
-                                          countinvoice=bp[4], countinvoice7Mtoup=bp[5], countinvoicebetween5to7=bp[6], ocrd_id=ocrd)
+            VwAgentPurchaseFrequencyCClub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
+                                          countinvoice=bp[4], countinvoice7Mtoup=bp[5], countinvoicebetween5to7M=bp[6], ocrd_id=ocrd)
     else:
         pass
 
@@ -95,7 +95,7 @@ def initVwAgentSKUCustomerClub(request):
         cursor.execute(sql)
         for bp in cursor:
             ocrd = Ocrd.objects.filter(bpcode=bp[0]).values('id')
-            Vwcustomerclub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
+            VwAgentSKUCustomerClub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
                                           countofsku=bp[4], countofsku500k=bp[5], ocrd_id=ocrd)
     else:
         pass
@@ -280,7 +280,8 @@ def logicCustomerVolumePurchase(request):
     datalist = []
     bpq = VwAgentPurchaseFrequencyCClub.objects.all()
     for bp in bpq:
-        quanof1MT = bp.totalprice/10000000
+        totalprice = 0 if bp.totalprice == None else bp.totalprice
+        quanof1MT = int(totalprice/10000000)
         for i in range(quanof1MT):
           if request.POST.__contains__('club'):
               clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
@@ -299,13 +300,17 @@ def logicCustomerFrequencyPurchase(request):
     datalist = []
     bpq = VwAgentPurchaseFrequencyCClub.objects.all()
     for bp in bpq:
-        for i in range(bp.countinvoice7Mtoup):
+
+        countinvoice7Mtoup = 0 if bp.countinvoice7Mtoup == None else bp.countinvoice7Mtoup
+        countinvoicebetween5to7M = 0 if bp.countinvoicebetween5to7M == None else bp.countinvoicebetween5to7M
+
+        for i in range(countinvoice7Mtoup):
           if request.POST.__contains__('club'):
               clubUserAchivementCreate(rulekey, basescoreup7m, bp.bpcode)
           elif request.POST.__contains__('excel'):
               data = (rulekey, bp.bpcode, basescoreup7m)
               datalist.append(data)
-        for i in range(bp.countinvoicebetween5to7M):
+        for i in range(countinvoicebetween5to7M):
           if request.POST.__contains__('club'):
               clubUserAchivementCreate(rulekey, basescoreup4to7m, bp.bpcode)
           elif request.POST.__contains__('excel'):
@@ -323,7 +328,9 @@ def logicCustomerSKUCount(request):
     datalist = []
     bpq = VwAgentSKUCustomerClub.objects.all()
     for bp in bpq:
-        for i in range(bp.countofsku500k):
+        countofsku500k = 0 if bp.countofsku500k == None else bp.countofsku500k
+
+        for i in range(countofsku500k):
           if request.POST.__contains__('club'):
               clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
           elif request.POST.__contains__('excel'):

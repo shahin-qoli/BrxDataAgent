@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-4hy84)97dx#e$gz_xil4(b(fb%095cour700&ic*=8rbbae1jt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'AgentV1.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'agentdev',
+        'NAME': 'agentprod',
         'USER': 'postgres',
         'PASSWORD': '',
         'HOST': '',

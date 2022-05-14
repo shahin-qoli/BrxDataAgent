@@ -33,26 +33,26 @@ class Ordr(models.Model):
 class VwAgentPurchaseFrequencyCClub(models.Model):
     bpcode = models.CharField(max_length=200)
     ocrd = models.ForeignKey(Ocrd, on_delete=models.CASCADE)
-    quarternum = models.IntegerField()
+    quarternum = models.IntegerField(blank=True, null=True)
     year = models.IntegerField()
     totalprice = models.DecimalField(max_digits=200,decimal_places=0)
-    countinvoice = models.IntegerField()
-    countinvoice7Mtoup = models.IntegerField()
-    countinvoicebetween5to7M = models.IntegerField()
+    countinvoice = models.IntegerField(blank=True, null=True)
+    countinvoice7Mtoup = models.IntegerField(blank=True, null=True)
+    countinvoicebetween5to7M = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return self.cardcode
+        return self.bpcode
 
 
 ##table for CC, rule1
 class VwAgentSKUCustomerClub(models.Model):
     bpcode = models.CharField(max_length=200)
     ocrd = models.ForeignKey(Ocrd, on_delete=models.CASCADE)
-    quarternum = models.IntegerField()
+    quarternum = models.IntegerField(blank=True, null=True)
     year = models.IntegerField()
     totalprice = models.DecimalField(max_digits=200,decimal_places=0)
-    countofsku = models.IntegerField()
-    countofsku500k = models.IntegerField()
+    countofsku = models.IntegerField(blank=True, null=True)
+    countofsku500k = models.IntegerField(blank=True, null=True)
 
 
     def __str__(self):
