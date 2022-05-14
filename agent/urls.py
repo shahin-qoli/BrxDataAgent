@@ -8,6 +8,7 @@ urlpatterns = [
     path('init/oslp', views.initOslp, name='initoslp'),
     path('init/ocrd', views.initOcrd, name='initocrd'),
     path('init/ordr', views.initOrdr, name='initordr'),
+    path('init/vwAgentpurchasefrequencycclub', views.initVwAgentPurchaseFrequencyCClub, name='initvwAgentpurchasefrequencycclub'),
     path('init/vwcustomerclub', views.initVwcustomerclub, name='initvwcustomerclub'),
     path('init/vwvisitorsku', views.iniVwvisitorsku, name='iniVwvisitorsku'),
     path('init/newcustomer', views.initNewCustomer, name='initnewcustomer'),

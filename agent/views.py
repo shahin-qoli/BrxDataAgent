@@ -73,6 +73,21 @@ def initOcrdOslp(request):
             OcrdOslp.objects.create(ocrd_id=ocrdid, bpcode=bp[0], oslp_id=oslpid, slpcode=bp[1])
 
 
+def initVwAgentPurchaseFrequencyCClub(request):
+    if request.method == 'GET':
+        cursor = conncetReport.cursor()
+        OcrdOslp.objects.all().delete()
+        sql = "SELECT CardCode,QuarterNum, [Year], Totalprice, CountInvoice,CountInvoice7MtoUp, CountInvoiceBetween5to7M from Burux.VwAgentPurchaseFrequencyCClub where [Year] = 1400 and QuarterNum = 4"
+        cursor.execute(sql)
+        for bp in cursor:
+            ocrd = Ocrd.objects.filter(bpcode=bp[0]).values('id')
+            Vwcustomerclub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
+                                          countinvoice=bp[4], countinvoice7Mtoup=bp[5], countinvoicebetween5to7=bp[6], ocrd_id=ocrd)
+    else:
+        pass
+
+
+
 def initVwcustomerclub(request):
     if request.method == 'GET':
         Vwcustomerclub.objects.all().delete()
@@ -322,4 +337,5 @@ def pageRuleVC3(request):
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
     elif request.method == 'POST':
-       return(logicVisitorAvticeCus(request))
+       return(logicVisitorCusCoverage(request))
+
