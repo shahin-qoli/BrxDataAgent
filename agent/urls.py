@@ -27,5 +27,6 @@ urlpatterns = [
     path('logic/VisitorInvSkuCount', views.logicVisitorInvSkuCount, name='logicVisitorInvSkuCount'),
 #    path('club/getruleparams', views.clubGetRuleParams, name='clubGetRuleParams'),
     path('', views.pageIndex, name='agentindex'),
+    path('test/', views.testclubUserAchivementCreate, name='test'),
 
    ]

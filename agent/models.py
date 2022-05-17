@@ -56,7 +56,7 @@ class VwAgentSKUCustomerClub(models.Model):
 
 
     def __str__(self):
-        return self.cardcode
+        return self.bpcode
 
 class Vwvisitorsku(models.Model):
     slpcode = models.IntegerField()
@@ -123,7 +123,17 @@ class Rules(models.Model):
         return self.key
 
 
-"""class RuleParameters(models.Model):
+class TransLogs(models.Model):
+    requestdate = models.DateTimeField()
+    ruleid = models.IntegerField()
+    parameterkey = models.CharField(max_length=200)
+    userid = models.CharField(max_length=200)
+    CustomParameter = models.CharField(max_length= 200)
+    status = models.CharField(max_length=200)
+    def __int__(self):
+        return self.id
+
+    """class RuleParameters(models.Model):
     key = models.CharField(max_length=200)
     value = models.IntegerField()
     ruleid = models.CharField(max_length=200)

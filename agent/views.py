@@ -8,14 +8,14 @@ from django.http import HttpResponse
 from django.shortcuts import render
 import requests
 from agent.models import Ocrd, Vwcustomerclub, NewCustomer, Oslp, OcrdOslp, VwagentActiveCustomerPerVisitor, Ordr, \
-    Vwvisitorsku, Rules,VwAgentSKUCustomerClub,VwAgentPurchaseFrequencyCClub
+    Vwvisitorsku, Rules,VwAgentSKUCustomerClub,VwAgentPurchaseFrequencyCClub, TransLogs
 from .forms import ruleActiceCusForm, ruleVisitorCoverageForm, ruleCustomerSKUCount, ruleCustomerVolumePurchase, ruleCustomerFrequencyPurchase
 
 connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "B1-Burux")
 conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reports")
 # connectB1 = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER="192.168.10.37";DATABASE="B1-Burux";UID="BIAgent";PWD="ABCdef123"')
 apiUrlGetRuleByKey = 'https://gamificatoin-club.burux.ir/default/Rule/PAT_GetByKey'
-apiUrlUserAchivementCreate = 'localhost:7000/v1/UserAchivement/PAT_Create'
+apiUrlUserAchivementCreate = 'https://gamificatoin-club.burux.ir/default/UserAchievement/PAT_Create'
 
 
 def initOslp(request):
@@ -168,12 +168,30 @@ def handleNewCustomer(request):
         pass
 
 
-def clubUserAchivementCreate(rulekey, parameterkey, userid):
-    bodygem = {"Ruleid": rulekey, "ParameterKey": parameterkey,
-               "UserId": userid,
-               "DateTime": datetime.now(), "CustomParameter": []}
+def testclubUserAchivementCreate(request):
+    rulekey = "Rule2-CC"
+    parameterkey = "score"
+    userid = "test"
+    clubUserAchivementCreate(rulekey, parameterkey, userid )
 
-    res = requests.post(apiUrlUserAchivementCreate, bodygem)
+def clubUserAchivementCreate(rulekey, parameterkey, userid):
+    newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    CustomParameter = []
+    bodygetrule = {'Key': rulekey }
+    Headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    resruleid = requests.post(apiUrlGetRuleByKey,json= bodygetrule,headers= Headers,auth=("shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
+    response = resruleid.json()
+    ruleid = response["Value"]["Id"]
+    Datetime = datetime.now()
+    d = f"{Datetime}"
+    bodygem = {"Ruleid": ruleid, "ParameterKey": parameterkey,
+               "UserId": userid,
+               "DateTime": d, "CustomParameter": CustomParameter}
+    #body = json.dumps(bodygem)
+    res = requests.post(apiUrlUserAchivementCreate,json= bodygem,headers= newHeaders,auth=("shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
+    responsecreat = res.json()
+    status = responsecreat['Succeeded']
+    syslogger(datetime.now(), ruleid, parameterkey, userid, CustomParameter,status )
 
 
 """
@@ -185,11 +203,11 @@ def clubUserAchivementCreateScore(rulekey, userid, countscore):
 """
 
 def logicTry(request):
-        if request.POST['rulekey'] == 'Rule1.CC':
+        if request.POST['rulekey'] == 'Rule1-CC':
             return (logicCustomerSKUCount(request))
-        elif request.POST['rulekey'] == 'Rule2.CC':
+        elif request.POST['rulekey'] == 'Rule2-CC':
             return (logicCustomerVolumePurchase(request))
-        elif request.POST['rulekey'] == 'Rule3.CC':
+        elif request.POST['rulekey'] == 'Rule3-CC':
             return (logicCustomerFrequencyPurchase(request))
 
 
@@ -229,7 +247,7 @@ def renderRuleFormWoutDate(request):
 
 
 def logicVisitorAvticeCus(request):
-    rulekey = 'Rule2.VC'
+    rulekey = 'Rule2-VC'
     visq = VwagentActiveCustomerPerVisitor.objects.all()
     basegem = request.POST['gem']
     basescore = request.POST['score']
@@ -275,7 +293,7 @@ def logicVisitorNewCus(request):
 """
 #Rule2.CC
 def logicCustomerVolumePurchase(request):
-    rulekey = 'Rule2.CC'
+    rulekey = 'Rule2-CC'
     basescore = request.POST['score']
     datalist = []
     bpq = VwAgentPurchaseFrequencyCClub.objects.all()
@@ -294,7 +312,7 @@ def logicCustomerVolumePurchase(request):
 
 #Rule3.CC
 def logicCustomerFrequencyPurchase(request):
-    rulekey = 'Rule3.CC'
+    rulekey = 'Rule3-CC'
     basescoreup7m = request.POST['scoreup7m']
     basescoreup4to7m = request.POST['scoreup4to7m']
     datalist = []
@@ -323,7 +341,7 @@ def logicCustomerFrequencyPurchase(request):
 
 #Rule1.CC quan of inv line
 def logicCustomerSKUCount(request):
-    rulekey = 'Rule1.CC'
+    rulekey = 'Rule1-CC'
     basescore = request.POST['score']
     datalist = []
     bpq = VwAgentSKUCustomerClub.objects.all()
@@ -353,6 +371,7 @@ def logicVisitorInvSkuCount(request):
         scorecount = vis.countuniquesku * basescore
         if request.POST.__contains__('club'):
             clubUserAchivementCreate(rulekey, vis.slpcode, gemcount)
+
  #           clubUserAchivementCreateScore(rulekey, vis.slpcode, scorecount)
         elif request.POST.__contains__('excel'):
             data = (rulekey, vis.slpcode, gemcount, scorecount)
@@ -381,6 +400,13 @@ def exportUserAchivement(request, rows):
     return response
 
 
+def syslogger(requestdate, ruleid, parameterkey, userid, CustomParameter, status):
+    TransLogs.objects.create(requestdate= requestdate, ruleid= ruleid, parameterkey= parameterkey, userid= userid, CustomParameter= CustomParameter, status= status)
+
+
+
+
+
 """
 This section is just for test, I have to write def for retriev e data from khsoravi api
 """
@@ -396,14 +422,14 @@ def pageIndex(request):
 
 
 def pageRuleVC2(request):
-    rulekey = 'Rule2.VC'
+    rulekey = 'Rule2-VC'
     form = ruleActiceCusForm(initial ={"rulekey": rulekey })
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
 
 
 def pageRuleVC3(request):
-    rulekey = 'Rule3.VC'
+    rulekey = 'Rule3-VC'
     form = ruleVisitorCoverageForm(initial ={"rulekey": rulekey })
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
@@ -411,7 +437,7 @@ def pageRuleVC3(request):
 
 
 def pageRuleCC1(request):
-    rulekey = 'Rule1.CC'
+    rulekey = 'Rule1-CC'
     message = 'شما در حال محاسبه قانون خط فاکتور برای مشتری هستید'
     form = ruleCustomerSKUCount(initial ={"rulekey": rulekey, "message": message })
     if request.method == 'GET':
@@ -419,15 +445,16 @@ def pageRuleCC1(request):
 
 
 def pageRuleCC2(request):
-    rulekey = 'Rule2.CC'
+    rulekey = 'Rule2-CC'
     message = 'شما در حال محاسبه قانون حجم خرید برای مشتری هستید'
     form = ruleCustomerVolumePurchase(initial ={"rulekey": rulekey, "message": message })
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form, "message": message})
 
 def pageRuleCC3(request):
-    rulekey = 'Rule3.CC'
+    rulekey = 'Rule3-CC'
     message = 'شما در حال محاسبه قانون استمرار خرید برای مشتری هستید'
     form = ruleCustomerFrequencyPurchase(initial ={"rulekey": rulekey })
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form, "message": message})
+

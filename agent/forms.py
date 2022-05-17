@@ -27,7 +27,7 @@ def clubGetRuleParams(rulekey, type):
 
 
 class ruleActiceCusForm(forms.Form):
-    rulekey = 'Rule2.VC'
+    rulekey = 'Rule2-VC'
     gemChoices = clubGetRuleParams(rulekey,'gem')
     scoreChoices = clubGetRuleParams(rulekey,'score')
   #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
@@ -39,7 +39,7 @@ class ruleActiceCusForm(forms.Form):
 
 
 class ruleVisitorCoverageForm(forms.Form):
-    rulekey = 'Rule3.VC'
+    rulekey = 'Rule3-VC'
     gemChoices = clubGetRuleParams(rulekey,'gem')
     scoreChoices = clubGetRuleParams(rulekey,'score')
   #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
@@ -56,7 +56,7 @@ class ruleVisitorCoverageForm(forms.Form):
 
 #'Rule1.CC'
 class ruleCustomerSKUCount(forms.Form):
-    rulekey = 'Rule1.CC'
+    rulekey = 'Rule1-CC'
     scoreChoices = clubGetRuleParams(rulekey,'score')
   #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
    # gemb10 = forms.ChoiceField(label='gemb10',choices= gemChoices)
@@ -67,7 +67,7 @@ class ruleCustomerSKUCount(forms.Form):
 
 #'Rule2.CC'
 class ruleCustomerVolumePurchase(forms.Form):
-    rulekey = 'Rule2.CC'
+    rulekey = 'Rule2-CC'
     scoreChoices = clubGetRuleParams(rulekey,'score')
   #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
    # gemb10 = forms.ChoiceField(label='gemb10',choices= gemChoices)
@@ -78,7 +78,7 @@ class ruleCustomerVolumePurchase(forms.Form):
 
 #'Rule3.CC'
 class ruleCustomerFrequencyPurchase(forms.Form):
-    rulekey = 'Rule3.CC'
+    rulekey = 'Rule3-CC'
     scoreChoices = clubGetRuleParams(rulekey,'score')
   #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
    # gemb10 = forms.ChoiceField(label='gemb10',choices= gemChoices)
