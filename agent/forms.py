@@ -2,6 +2,9 @@ from django import forms
 import json
 import requests
 
+type_choices = ["gem", "score"]
+
+
 def clubGetRuleParams(rulekey, type):
     apiUrlGetRuleByKey = 'https://gamificatoin-club.burux.ir/default/Rule/PAT_GetByKey'
     headers = {"Authorization" : "Basic c2hhaGluOmQyNmRhOTZlMmYwZDQxYzJiZjc1NjE2ZDM4Y2IyNGYxNDI5MDQ1Yzk1MGMyNGFjZGJiNGUwZGM1OWMxMTI3MjE="}
@@ -87,3 +90,14 @@ class ruleCustomerFrequencyPurchase(forms.Form):
     scoreup4to7m = forms.ChoiceField(label='scoreup4to7m', choices= scoreChoices)
     excel = forms.BooleanField(label='excel',required=False)
     club = forms.BooleanField(label='club',required=False)
+
+
+class reportFromClub(forms.Form):
+    type = forms.ChoiceField(label='scoreOrGem', choices= type_choices)
+    rule_id = forms.IntegerField()
+    user_id = forms.CharField(max_length= 200)
+    start_date = forms.DateField( )
+    end_date = forms.DateField( )
+    current_date = forms.DateField()
+
+

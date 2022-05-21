@@ -9,14 +9,14 @@ from django.shortcuts import render
 import requests
 from agent.models import Ocrd, Vwcustomerclub, NewCustomer, Oslp, OcrdOslp, VwagentActiveCustomerPerVisitor, Ordr, \
     Vwvisitorsku, Rules,VwAgentSKUCustomerClub,VwAgentPurchaseFrequencyCClub, TransLogs
-from .forms import ruleActiceCusForm, ruleVisitorCoverageForm, ruleCustomerSKUCount, ruleCustomerVolumePurchase, ruleCustomerFrequencyPurchase
+from .forms import *
 
-connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "B1-Burux")
-conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reports")
+#connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "B1-Burux")
+#conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reports")
 # connectB1 = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER="192.168.10.37";DATABASE="B1-Burux";UID="BIAgent";PWD="ABCdef123"')
 apiUrlGetRuleByKey = 'https://gamificatoin-club.burux.ir/default/Rule/PAT_GetByKey'
 apiUrlUserAchivementCreate = 'https://gamificatoin-club.burux.ir/default/UserAchievement/PAT_Create'
-
+apiUrlSearch = 'https://gamificatoin-club.burux.ir/default/UserAchievement/PAT_Search'
 
 def initOslp(request):
     if request.method == 'GET':
@@ -194,6 +194,7 @@ def clubUserAchivementCreate(rulekey, parameterkey, userid):
     syslogger(datetime.now(), ruleid, parameterkey, userid, CustomParameter,status )
 
 
+
 """
 def clubUserAchivementCreateScore(rulekey, userid, countscore):
     bodyscore = {"Ruleid": rulekey, "ParameterKey": "score", "Count": countscore,
@@ -303,6 +304,7 @@ def logicCustomerVolumePurchase(request):
         for i in range(quanof1MT):
           if request.POST.__contains__('club'):
               clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
+
           elif request.POST.__contains__('excel'):
               data = (rulekey, bp.bpcode, basescore)
               datalist.append(data)
@@ -457,4 +459,25 @@ def pageRuleCC3(request):
     form = ruleCustomerFrequencyPurchase(initial ={"rulekey": rulekey })
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form, "message": message})
+
+
+def pageReport(request):
+    if request.method == 'GET':
+        form = reportFromClub
+        return render(request, "agent/report.html", {"form": form})
+    elif request.method == 'POST':
+        Type = request.POST['type']
+        RuleId = request.POST['rule_id']
+        UserId = request.POST['user_id']
+        StartDate = request.POST['start_date']
+        EndDate = request.POST['end_date']
+        CurrentDate = request.POST['current_date']
+        body = {'filter':{ 'filters' : [ { "Field": "Type", "Value": Type },{ "Field": "RuleId", "Value": RuleId },{ "Field": "UserId", "Value": UserId },
+                                         {"Field": "StartDate", "Value": StartDate},{"Field": "EndDate", "Value": EndDate}, {"Field": "CurrentDate", "Value": CurrentDate} ]} }
+        newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+        res = requests.post(apiUrlGetRuleByKey, json=body, headers=newHeaders,
+                            auth=("shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
+        response = res.json()
+
+
 
