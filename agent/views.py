@@ -11,9 +11,9 @@ from agent.models import Ocrd, Vwcustomerclub, NewCustomer, Oslp, OcrdOslp, Vwag
     Vwvisitorsku, Rules,VwAgentSKUCustomerClub,VwAgentPurchaseFrequencyCClub, TransLogs
 from .forms import *
 
-#connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "B1-Burux")
-#conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reports")
-# connectB1 = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER="192.168.10.37";DATABASE="B1-Burux";UID="BIAgent";PWD="ABCdef123"')
+connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "BURUX")
+conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reporting")
+#connectB1 = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER="192.168.10.37";DATABASE="B1-Burux";UID="BIAgent";PWD="ABCdef123"')
 apiUrlGetRuleByKey = 'https://gamificatoin-club.burux.ir/default/Rule/PAT_GetByKey'
 apiUrlUserAchivementCreate = 'https://gamificatoin-club.burux.ir/default/UserAchievement/PAT_Create'
 apiUrlSearch = 'https://gamificatoin-club.burux.ir/default/UserAchievement/PAT_Search'
@@ -28,7 +28,8 @@ def initOslp(request):
                 Oslp.objects.create(slpcode=bp[0], slpname=bp[1])
             else:
                 pass
-
+        message = "OSLP inited"
+        return render(request,"agent/ok.html", {"message" : message})
     else:
         pass
 
@@ -44,6 +45,8 @@ def initOcrd(request):
                 Ocrd.objects.create(bpcode=bp[0], bpname=bp[1], bpcreatedate=bp[2])
             else:
                 pass
+        message = "OCRD inited"
+        return render(request,"agent/ok.html", {"message" : message})
 
     else:
         pass
@@ -59,7 +62,8 @@ def initOrdr(request):
             ocrdid = Ocrd.objects.filter(bpcode=bp[0]).values('id')
             oslpid = Oslp.objects.filter(slpcode=bp[1]).values('id')
             Ordr.objects.create(ocrd_id=ocrdid, oslp_id=oslpid, bpcode=bp[0], slpcode=bp[1], docdate=bp[2])
-
+        message = "ORDR inited"
+        return render(request,"agent/ok.html", {"message" : message})
 
 def initOcrdOslp(request):
     if request.method == 'GET':
@@ -71,18 +75,21 @@ def initOcrdOslp(request):
             ocrdid = Ocrd.objects.filter(bpcode=bp[0]).values('id')
             oslpid = Oslp.objects.filter(slpcode=bp[1]).values('id')
             OcrdOslp.objects.create(ocrd_id=ocrdid, bpcode=bp[0], oslp_id=oslpid, slpcode=bp[1])
-
+        message = "OcrdOslp inited"
+        return render(request,"agent/ok.html", {"message" : message})
 
 def initVwAgentPurchaseFrequencyCClub(request):
     if request.method == 'GET':
         cursor = conncetReport.cursor()
         OcrdOslp.objects.all().delete()
-        sql = "SELECT CardCode,QuarterNum, [Year], Totalprice, CountInvoice,CountInvoice7MtoUp, CountInvoiceBetween5to7M from Burux.VwAgentPurchaseFrequencyCClub where [Year] = 1400 and QuarterNum = 4"
+        sql = "SELECT CardCode,QuarterNum, [Year], Totalprice, CountInvoice,CountInvoice7MtoUp, CountInvoiceBetween4to7M from Burux.VwAgentPurchaseFrequencyCClub where [Year] = 1400 and QuarterNum = 4"
         cursor.execute(sql)
         for bp in cursor:
             ocrd = Ocrd.objects.filter(bpcode=bp[0]).values('id')
             VwAgentPurchaseFrequencyCClub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
-                                          countinvoice=bp[4], countinvoice7Mtoup=bp[5], countinvoicebetween5to7M=bp[6], ocrd_id=ocrd)
+                                          countinvoice=bp[4], countinvoice7Mtoup=bp[5], countinvoicebetween4to7M=bp[6], ocrd_id=ocrd)
+        message = "VwAgentPurchaseFrequencyCClub inited"
+        return render(request, "agent/ok.html", {"message": message})
     else:
         pass
 
@@ -91,16 +98,18 @@ def initVwAgentSKUCustomerClub(request):
     if request.method == 'GET':
         cursor = conncetReport.cursor()
         OcrdOslp.objects.all().delete()
-        sql = "SELECT CardCode,QuarterNum, [Year], Totalprice, CountOfSKU,CountOfSKU500K from Burux.VwAgentSKUCustomerClub where [Year] = 1400 and QuarterNum = 4"
+        sql = "SELECT CardCode,QuarterNum, [jYear], Totalprice, CountOfSKU,CountOfSKU500K from Burux.VwAgentSKUCustomerClub where [jYear] = 1400 and QuarterNum = 4"
         cursor.execute(sql)
         for bp in cursor:
             ocrd = Ocrd.objects.filter(bpcode=bp[0]).values('id')
             VwAgentSKUCustomerClub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
                                           countofsku=bp[4], countofsku500k=bp[5], ocrd_id=ocrd)
+        message = "VwAgentSKUCustomerClub inited"
+        return render(request, "agent/ok.html", {"message": message})
     else:
         pass
 
-def initVwcustomerclub(request):
+"""def initVwcustomerclub(request):
     if request.method == 'GET':
         Vwcustomerclub.objects.all().delete()
         cursor = conncetReport.cursor()
@@ -112,9 +121,9 @@ def initVwcustomerclub(request):
                                           countsku=bp[4], countskuup500kT=bp[5], totalprice=bp[6], ocrd_id=ocrd)
     else:
         pass
+"""
 
-
-def initVwagentActiveCustomerPerVisitor(request):
+"""def initVwagentActiveCustomerPerVisitor(request):
     if request.method == 'GET':
         VwagentActiveCustomerPerVisitor.objects.all().delete()
         cursor = conncetReport.cursor()
@@ -126,7 +135,7 @@ def initVwagentActiveCustomerPerVisitor(request):
                                                            oslp_id=oslp)
     else:
         pass
-
+"""
 
 def iniVwvisitorsku(request):
     if request.method == 'GET':

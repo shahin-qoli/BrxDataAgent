@@ -38,7 +38,7 @@ class VwAgentPurchaseFrequencyCClub(models.Model):
     totalprice = models.DecimalField(max_digits=200,decimal_places=0)
     countinvoice = models.IntegerField(blank=True, null=True)
     countinvoice7Mtoup = models.IntegerField(blank=True, null=True)
-    countinvoicebetween5to7M = models.IntegerField(blank=True, null=True)
+    countinvoicebetween4to7M = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return self.bpcode
