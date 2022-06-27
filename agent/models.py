@@ -148,3 +148,9 @@ class TransLogs(models.Model):
 
 
 """
+class TransLogsJason(models.Model):
+    requestdate = models.DateTimeField()
+    request_body = models.JSONField()
+    status = models.CharField(max_length=200)
+    def __int__(self):
+        return self.id

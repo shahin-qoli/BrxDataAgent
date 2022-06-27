@@ -8,15 +8,16 @@ from django.http import HttpResponse
 from django.shortcuts import render
 import requests
 from agent.models import Ocrd, Vwcustomerclub, NewCustomer, Oslp, OcrdOslp, VwagentActiveCustomerPerVisitor, Ordr, \
-    Vwvisitorsku, Rules,VwAgentSKUCustomerClub,VwAgentPurchaseFrequencyCClub, TransLogs
+    Vwvisitorsku, Rules, VwAgentSKUCustomerClub, VwAgentPurchaseFrequencyCClub, TransLogs
 from .forms import *
 
 connectB1 = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "BURUX")
 conncetReport = pymssql.connect("192.168.10.37", "BIAgent", "ABCdef123", "Reporting")
-#connectB1 = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER="192.168.10.37";DATABASE="B1-Burux";UID="BIAgent";PWD="ABCdef123"')
+# connectB1 = pyodbc.connect('DRIVER={ODBC Driver 18 for SQL Server};SERVER="192.168.10.37";DATABASE="B1-Burux";UID="BIAgent";PWD="ABCdef123"')
 apiUrlGetRuleByKey = 'https://gamificatoin-club.burux.ir/default/Rule/PAT_GetByKey'
 apiUrlUserAchivementCreate = 'https://gamificatoin-club.burux.ir/default/UserAchievement/PAT_Create'
 apiUrlSearch = 'https://gamificatoin-club.burux.ir/default/UserAchievement/PAT_Search'
+
 
 def initOslp(request):
     if request.method == 'GET':
@@ -29,7 +30,7 @@ def initOslp(request):
             else:
                 pass
         message = "OSLP inited"
-        return render(request,"agent/ok.html", {"message" : message})
+        return render(request, "agent/ok.html", {"message": message})
     else:
         pass
 
@@ -46,7 +47,7 @@ def initOcrd(request):
             else:
                 pass
         message = "OCRD inited"
-        return render(request,"agent/ok.html", {"message" : message})
+        return render(request, "agent/ok.html", {"message": message})
 
     else:
         pass
@@ -63,7 +64,8 @@ def initOrdr(request):
             oslpid = Oslp.objects.filter(slpcode=bp[1]).values('id')
             Ordr.objects.create(ocrd_id=ocrdid, oslp_id=oslpid, bpcode=bp[0], slpcode=bp[1], docdate=bp[2])
         message = "ORDR inited"
-        return render(request,"agent/ok.html", {"message" : message})
+        return render(request, "agent/ok.html", {"message": message})
+
 
 def initOcrdOslp(request):
     if request.method == 'GET':
@@ -76,18 +78,20 @@ def initOcrdOslp(request):
             oslpid = Oslp.objects.filter(slpcode=bp[1]).values('id')
             OcrdOslp.objects.create(ocrd_id=ocrdid, bpcode=bp[0], oslp_id=oslpid, slpcode=bp[1])
         message = "OcrdOslp inited"
-        return render(request,"agent/ok.html", {"message" : message})
+        return render(request, "agent/ok.html", {"message": message})
+
 
 def initVwAgentPurchaseFrequencyCClub(request):
     if request.method == 'GET':
         cursor = conncetReport.cursor()
         OcrdOslp.objects.all().delete()
-        sql = "SELECT CardCode,QuarterNum, [Year], Totalprice, CountInvoice,CountInvoice7MtoUp, CountInvoiceBetween4to7M from Burux.VwAgentPurchaseFrequencyCClub where [Year] = 1400 and QuarterNum = 4"
+        sql = "SELECT CardCode,QuarterNum, [Year], Totalprice, CountInvoice,CountInvoice7MtoUp, CountInvoiceBetween4to7M from Burux.VwAgentPurchaseFrequencyCClub where [Year] = 1401 and QuarterNum = 1"
         cursor.execute(sql)
         for bp in cursor:
             ocrd = Ocrd.objects.filter(bpcode=bp[0]).values('id')
             VwAgentPurchaseFrequencyCClub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
-                                          countinvoice=bp[4], countinvoice7Mtoup=bp[5], countinvoicebetween4to7M=bp[6], ocrd_id=ocrd)
+                                                         countinvoice=bp[4], countinvoice7Mtoup=bp[5],
+                                                         countinvoicebetween4to7M=bp[6], ocrd_id=ocrd)
         message = "VwAgentPurchaseFrequencyCClub inited"
         return render(request, "agent/ok.html", {"message": message})
     else:
@@ -98,16 +102,17 @@ def initVwAgentSKUCustomerClub(request):
     if request.method == 'GET':
         cursor = conncetReport.cursor()
         OcrdOslp.objects.all().delete()
-        sql = "SELECT CardCode,QuarterNum, [jYear], Totalprice, CountOfSKU,CountOfSKU500K from Burux.VwAgentSKUCustomerClub where [jYear] = 1400 and QuarterNum = 4"
+        sql = "SELECT CardCode,QuarterNum, [jYear], Totalprice, CountOfSKU,CountOfSKU500K from Burux.VwAgentSKUCustomerClub where [jYear] = 1401 and QuarterNum = 1"
         cursor.execute(sql)
         for bp in cursor:
             ocrd = Ocrd.objects.filter(bpcode=bp[0]).values('id')
             VwAgentSKUCustomerClub.objects.create(bpcode=bp[0], quarternum=bp[1], year=bp[2], totalprice=bp[3],
-                                          countofsku=bp[4], countofsku500k=bp[5], ocrd_id=ocrd)
+                                                  countofsku=bp[4], countofsku500k=bp[5], ocrd_id=ocrd)
         message = "VwAgentSKUCustomerClub inited"
         return render(request, "agent/ok.html", {"message": message})
     else:
         pass
+
 
 """def initVwcustomerclub(request):
     if request.method == 'GET':
@@ -136,6 +141,7 @@ def initVwAgentSKUCustomerClub(request):
     else:
         pass
 """
+
 
 def iniVwvisitorsku(request):
     if request.method == 'GET':
@@ -181,27 +187,7 @@ def testclubUserAchivementCreate(request):
     rulekey = "Rule2-CC"
     parameterkey = "score"
     userid = "test"
-    clubUserAchivementCreate(rulekey, parameterkey, userid )
-
-def clubUserAchivementCreate(rulekey, parameterkey, userid):
-    newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    CustomParameter = []
-    bodygetrule = {'Key': rulekey }
-    Headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
-    resruleid = requests.post(apiUrlGetRuleByKey,json= bodygetrule,headers= Headers,auth=("shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
-    response = resruleid.json()
-    ruleid = response["Value"]["Id"]
-    Datetime = datetime.now()
-    d = f"{Datetime}"
-    bodygem = {"Ruleid": ruleid, "ParameterKey": parameterkey,
-               "UserId": userid,
-               "DateTime": d, "CustomParameter": CustomParameter}
-    #body = json.dumps(bodygem)
-    res = requests.post(apiUrlUserAchivementCreate,json= bodygem,headers= newHeaders,auth=("shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
-    responsecreat = res.json()
-    status = responsecreat['Succeeded']
-    syslogger(datetime.now(), ruleid, parameterkey, userid, CustomParameter,status )
-
+    clubUserAchivementCreate(rulekey, parameterkey, userid)
 
 
 """
@@ -212,13 +198,14 @@ def clubUserAchivementCreateScore(rulekey, userid, countscore):
     res = requests.post(apiUrlUserAchivementCreate, bodyscore)
 """
 
+
 def logicTry(request):
-        if request.POST['rulekey'] == 'Rule1-CC':
-            return (logicCustomerSKUCount(request))
-        elif request.POST['rulekey'] == 'Rule2-CC':
-            return (logicCustomerVolumePurchase(request))
-        elif request.POST['rulekey'] == 'Rule3-CC':
-            return (logicCustomerFrequencyPurchase(request))
+    if request.POST['rulekey'] == 'Rule1-CC':
+        return (logicCustomerSKUCount(request))
+    elif request.POST['rulekey'] == 'Rule2-CC':
+        return (logicCustomerVolumePurchase(request))
+    elif request.POST['rulekey'] == 'Rule3-CC':
+        return (logicCustomerFrequencyPurchase(request))
 
 
 """def logicVisitorCusCoverage(request):
@@ -263,12 +250,12 @@ def logicVisitorAvticeCus(request):
     basescore = request.POST['score']
     datalist = []
     for vis in visq:
-       # gemcount = vis.quartern * basegem
-        #scorecount = vis.quartern * basescore
+        # gemcount = vis.quartern * basegem
+        # scorecount = vis.quartern * basescore
         if request.POST.__contains__('club'):
             for i in range(vis.activecustomer):
-              clubUserAchivementCreate(rulekey, basegem, vis.slpcode)
-              clubUserAchivementCreate(rulekey, basescore, vis.slpcode)
+                clubUserAchivementCreate(rulekey, basegem, vis.slpcode)
+                clubUserAchivementCreate(rulekey, basescore, vis.slpcode)
         elif request.POST.__contains__('excel'):
             data = (rulekey, vis.slpcode, basegem, basescore)
             datalist.append(data)
@@ -301,32 +288,52 @@ def logicVisitorNewCus(request):
         return (exportUserAchivement(request, datalist))
 
 """
-#Rule2.CC
+
+#Done for new structure
+# Rule2.CC
 def logicCustomerVolumePurchase(request):
     rulekey = 'Rule2-CC'
     basescore = request.POST['score']
     datalist = []
+    create_list = []
     bpq = VwAgentPurchaseFrequencyCClub.objects.all()
     for bp in bpq:
         totalprice = 0 if bp.totalprice == None else bp.totalprice
-        quanof1MT = int(totalprice/10000000)
+        quanof1MT = int(totalprice / 10000000)
         for i in range(quanof1MT):
-          if request.POST.__contains__('club'):
-              clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
+            if request.POST.__contains__('club'):
+                CustomParameter = []
+                bodygetrule = {'Key': rulekey}
+                Headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+                resruleid = requests.post(apiUrlGetRuleByKey, json=bodygetrule, headers=Headers, auth=(
+                    "shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
+                response = resruleid.json()
+                ruleid = response["Value"]["Id"]
+                Datetime = datetime.now()
+                d = f"{Datetime}"
+                single_create = {"Ruleid": ruleid, "ParameterKey": basescore,
+                                 "UserId": bp.bpcode,
+                                 "DateTime": d, "CustomParameter": CustomParameter}
+                create_list.append(single_create)
+                #clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
 
-          elif request.POST.__contains__('excel'):
-              data = (rulekey, bp.bpcode, basescore)
-              datalist.append(data)
+            elif request.POST.__contains__('excel'):
+                data = (rulekey, bp.bpcode, basescore)
+                datalist.append(data)
 
     if request.POST.__contains__('excel'):
         return (exportUserAchivement(request, datalist))
+    elif request.POST.__contains__('club'):
+        clubUserAchivementCreate(create_list)
 
-#Rule3.CC
+#Done for new structure
+# Rule3.CC
 def logicCustomerFrequencyPurchase(request):
     rulekey = 'Rule3-CC'
     basescoreup7m = request.POST['scoreup7m']
     basescoreup4to7m = request.POST['scoreup4to7m']
     datalist = []
+    create_list = []
     bpq = VwAgentPurchaseFrequencyCClub.objects.all()
     for bp in bpq:
 
@@ -334,40 +341,103 @@ def logicCustomerFrequencyPurchase(request):
         countinvoicebetween5to7M = 0 if bp.countinvoicebetween5to7M == None else bp.countinvoicebetween5to7M
 
         for i in range(countinvoice7Mtoup):
-          if request.POST.__contains__('club'):
-              clubUserAchivementCreate(rulekey, basescoreup7m, bp.bpcode)
-          elif request.POST.__contains__('excel'):
-              data = (rulekey, bp.bpcode, basescoreup7m)
-              datalist.append(data)
+            if request.POST.__contains__('club'):
+                CustomParameter = []
+                bodygetrule = {'Key': rulekey}
+                Headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+                resruleid = requests.post(apiUrlGetRuleByKey, json=bodygetrule, headers=Headers, auth=(
+                    "shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
+                response = resruleid.json()
+                ruleid = response["Value"]["Id"]
+                Datetime = datetime.now()
+                d = f"{Datetime}"
+                single_create = {"Ruleid": ruleid, "ParameterKey": basescoreup7m,
+                                 "UserId": bp.bpcode,
+                                 "DateTime": d, "CustomParameter": CustomParameter}
+                create_list.append(single_create)
+                #clubUserAchivementCreate(rulekey, basescoreup7m, bp.bpcode)
+            elif request.POST.__contains__('excel'):
+                data = (rulekey, bp.bpcode, basescoreup7m)
+                datalist.append(data)
         for i in range(countinvoicebetween5to7M):
-          if request.POST.__contains__('club'):
-              clubUserAchivementCreate(rulekey, basescoreup4to7m, bp.bpcode)
-          elif request.POST.__contains__('excel'):
-              data = (rulekey, bp.bpcode, basescoreup4to7m)
-              datalist.append(data)
+            if request.POST.__contains__('club'):
+                CustomParameter = []
+                bodygetrule = {'Key': rulekey}
+                Headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+                resruleid = requests.post(apiUrlGetRuleByKey, json=bodygetrule, headers=Headers, auth=(
+                    "shahin", "b61994a253844e75a8fea629f2df30932a6976b5c60445eeb7b59a7f3733b24b"))
+                response = resruleid.json()
+                ruleid = response["Value"]["Id"]
+                Datetime = datetime.now()
+                d = f"{Datetime}"
+                single_create = {"Ruleid": ruleid, "ParameterKey": basescoreup4to7m,
+                                 "UserId": bp.bpcode,
+                                 "DateTime": d, "CustomParameter": CustomParameter}
+                create_list.append(single_create)
+                #clubUserAchivementCreate(rulekey, basescoreup4to7m, bp.bpcode)
+            elif request.POST.__contains__('excel'):
+                data = (rulekey, bp.bpcode, basescoreup4to7m)
+                datalist.append(data)
 
     if request.POST.__contains__('excel'):
         return (exportUserAchivement(request, datalist))
+    elif request.POST.__contains__('club'):
+        clubUserAchivementCreate(create_list)
 
-
-#Rule1.CC quan of inv line
+#Done for new structure
+# Rule1.CC quan of inv line
 def logicCustomerSKUCount(request):
     rulekey = 'Rule1-CC'
     basescore = request.POST['score']
     datalist = []
+    create_list = []
     bpq = VwAgentSKUCustomerClub.objects.all()
     for bp in bpq:
         countofsku500k = 0 if bp.countofsku500k == None else bp.countofsku500k
 
         for i in range(countofsku500k):
-          if request.POST.__contains__('club'):
-              clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
-          elif request.POST.__contains__('excel'):
-              data = (rulekey, bp.bpcode, basescore)
-              datalist.append(data)
+            if request.POST.__contains__('club'):
+                CustomParameter = []
+                bodygetrule = {'Key': rulekey}
+                Headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+                resruleid = requests.post(apiUrlGetRuleByKey, json=bodygetrule, headers=Headers, auth=(
+                    "shahin", "b61994a253844e75a8fea629f2df30932a6976b5c60445eeb7b59a7f3733b24b"))
+                response = resruleid.json()
+                ruleid = response["Value"]["Id"]
+                Datetime = datetime.now()
+                d = f"{Datetime}"
+                single_create = {"Ruleid": ruleid, "ParameterKey": basescore,
+                                 "UserId": bp.bpcode,
+                                 "DateTime": d, "CustomParameter": CustomParameter}
+                create_list.append(single_create)
+                # clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
+            elif request.POST.__contains__('excel'):
+                data = (rulekey, bp.bpcode, basescore)
+                datalist.append(data)
 
     if request.POST.__contains__('excel'):
         return (exportUserAchivement(request, datalist))
+    elif request.POST.__contains__('club'):
+        clubUserAchivementCreate(create_list)
+
+
+def clubUserAchivementCreate(create_list):
+    newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    # CustomParameter = []
+    # bodygetrule = {'Key': rulekey }
+    # Headers = {'Content-type': 'application/json', 'Accept': 'text/plain'}
+    # resruleid = requests.post(apiUrlGetRuleByKey,json= bodygetrule,headers= Headers,auth=("shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
+    # response = resruleid.json()
+    # ruleid = response["Value"]["Id"]
+    # Datetime = datetime.now()
+    # d = f"{Datetime}"
+    bodygem = {"List": create_list}
+    body = json.dumps(bodygem)
+    res = requests.post(apiUrlUserAchivementCreate, json=bodygem, headers=newHeaders,
+                        auth=("shahin", "b61994a253844e75a8fea629f2df30932a6976b5c60445eeb7b59a7f3733b24b"))
+    responsecreat = res.json()
+    status = responsecreat['Succeeded']
+    sysloggerJson(datetime.now(), body, status)
 
 
 #
@@ -383,7 +453,7 @@ def logicVisitorInvSkuCount(request):
         if request.POST.__contains__('club'):
             clubUserAchivementCreate(rulekey, vis.slpcode, gemcount)
 
- #           clubUserAchivementCreateScore(rulekey, vis.slpcode, scorecount)
+        #           clubUserAchivementCreateScore(rulekey, vis.slpcode, scorecount)
         elif request.POST.__contains__('excel'):
             data = (rulekey, vis.slpcode, gemcount, scorecount)
             datalist.append(data)
@@ -412,10 +482,12 @@ def exportUserAchivement(request, rows):
 
 
 def syslogger(requestdate, ruleid, parameterkey, userid, CustomParameter, status):
-    TransLogs.objects.create(requestdate= requestdate, ruleid= ruleid, parameterkey= parameterkey, userid= userid, CustomParameter= CustomParameter, status= status)
+    TransLogs.objects.create(requestdate=requestdate, ruleid=ruleid, parameterkey=parameterkey, userid=userid,
+                             CustomParameter=CustomParameter, status=status)
 
 
-
+def sysloggerJson(requestdate, request_body, status):
+    TransLogs.objects.create(requestdate=requestdate, request_body=request_body, status=status)
 
 
 """
@@ -434,23 +506,22 @@ def pageIndex(request):
 
 def pageRuleVC2(request):
     rulekey = 'Rule2-VC'
-    form = ruleActiceCusForm(initial ={"rulekey": rulekey })
+    form = ruleActiceCusForm(initial={"rulekey": rulekey})
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
 
 
 def pageRuleVC3(request):
     rulekey = 'Rule3-VC'
-    form = ruleVisitorCoverageForm(initial ={"rulekey": rulekey })
+    form = ruleVisitorCoverageForm(initial={"rulekey": rulekey})
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form})
-
 
 
 def pageRuleCC1(request):
     rulekey = 'Rule1-CC'
     message = 'شما در حال محاسبه قانون خط فاکتور برای مشتری هستید'
-    form = ruleCustomerSKUCount(initial ={"rulekey": rulekey, "message": message })
+    form = ruleCustomerSKUCount(initial={"rulekey": rulekey, "message": message})
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form, "message": message})
 
@@ -458,14 +529,15 @@ def pageRuleCC1(request):
 def pageRuleCC2(request):
     rulekey = 'Rule2-CC'
     message = 'شما در حال محاسبه قانون حجم خرید برای مشتری هستید'
-    form = ruleCustomerVolumePurchase(initial ={"rulekey": rulekey, "message": message })
+    form = ruleCustomerVolumePurchase(initial={"rulekey": rulekey, "message": message})
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form, "message": message})
+
 
 def pageRuleCC3(request):
     rulekey = 'Rule3-CC'
     message = 'شما در حال محاسبه قانون استمرار خرید برای مشتری هستید'
-    form = ruleCustomerFrequencyPurchase(initial ={"rulekey": rulekey })
+    form = ruleCustomerFrequencyPurchase(initial={"rulekey": rulekey})
     if request.method == 'GET':
         return render(request, 'agent/index-2.html', {'form': form, "message": message})
 
@@ -481,12 +553,12 @@ def pageReport(request):
         StartDate = request.POST['start_date']
         EndDate = request.POST['end_date']
         CurrentDate = request.POST['current_date']
-        body = {'filter':{ 'filters' : [ { "Field": "Type", "Value": Type },{ "Field": "RuleId", "Value": RuleId },{ "Field": "UserId", "Value": UserId },
-                                         {"Field": "StartDate", "Value": StartDate},{"Field": "EndDate", "Value": EndDate}, {"Field": "CurrentDate", "Value": CurrentDate} ]} }
+        body = {'filter': {'filters': [{"Field": "Type", "Value": Type}, {"Field": "RuleId", "Value": RuleId},
+                                       {"Field": "UserId", "Value": UserId},
+                                       {"Field": "StartDate", "Value": StartDate},
+                                       {"Field": "EndDate", "Value": EndDate},
+                                       {"Field": "CurrentDate", "Value": CurrentDate}]}}
         newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
         res = requests.post(apiUrlGetRuleByKey, json=body, headers=newHeaders,
                             auth=("shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
         response = res.json()
-
-
-
