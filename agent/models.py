@@ -1,11 +1,23 @@
 from django.db import models
 
 # Create your models here.
-class Vendor(models.Model):
-    bpcode = models.CharField(max_length=200, blank=True, null=True)
-    bpname = models.CharField(max_length=200, blank=True, null=True)
-    bpcreatedate = models.DateField(max_length=200, blank=True, null=True)
 
+class PersonVis(models.Model):
+    id = models.IntegerField(unique=True, primary_key=True)
+    bpcode = models.CharField(max_length=200, blank=True, null=True)
+    slpcode = models.CharField(max_length=200, blank=True, null=True)
+    userid = models.CharField(max_length=200, blank=True, null=True)
+
+class PersonVen(models.Model):
+    id = models.IntegerField(unique=True, primary_key=True)
+    bpcode = models.CharField(max_length=200, blank=True, null=True)
+    slpcode = models.CharField(max_length=200, blank=True, null=True)
+    userid = models.CharField(max_length=200, blank=True, null=True)
+
+class Vendor(models.Model):
+    person = models.ForeignKey(PersonVen, on_delete= models.CASCADE, blank=True, null=True)
+    bpname = models.CharField(max_length=200, blank=True, null=True)
+    defaultvisitor = models.ForeignKey(PersonVis, on_delete= models.CASCADE, blank=True, null=True)
 
 class Ocrd(models.Model):
     bpcode = models.CharField(max_length=200, blank=True, null=True)
@@ -21,6 +33,24 @@ class Oslp(models.Model):
     def __str__(self):
         return self.slpname
 
+
+class vwActiveCountPerVisitor(models.Model):
+    slpcode = models.IntegerField()
+    activecount = models.IntegerField()
+    slpuserid = models.CharField(max_length=200)
+    def __int__(self):
+        return self.slpcode
+
+class vwAllCustomerOfVisitor(models.Model):
+    slpcode = models.IntegerField()
+    customercount = models.IntegerField()
+    slpuserid = models.CharField(max_length=200)
+    def __int__(self):
+        return self.slpcode
+class vwLeadOfVisitor(models.Model):
+    slpcode = models.IntegerField()
+    slpuserid = models.CharField(max_length=200)
+    bpcode = models.CharField(max_length=200)
 
 class Ordr(models.Model):
     bpcode = models.CharField(max_length=200)

@@ -11,7 +11,7 @@ def clubGetRuleParams(rulekey, type):
     body = {'Key': rulekey }
     newHeaders = {'Content-type': 'application/json', 'Accept': 'text/plain'}
     jsonData = json.dumps(body)
-    res = requests.post(apiUrlGetRuleByKey,json= body,headers= newHeaders,auth=("shahin", "d26da96e2f0d41c2bf75616d38cb24f1429045c950c24acdbb4e0dc59c112721"))
+    res = requests.post(apiUrlGetRuleByKey,json= body,headers= newHeaders,auth=("shahin", "b61994a253844e75a8fea629f2df30932a6976b5c60445eeb7b59a7f3733b24b"))
     response = res.json()
     params = response["Value"]["RuleParameters"]
     score_list = []
@@ -56,6 +56,29 @@ class ruleVisitorCoverageForm(forms.Form):
     scoreu40 = forms.ChoiceField(label='scoreu40', choices= scoreChoices)
     excel = forms.BooleanField(label='excel',required=False)
     club = forms.BooleanField(label='club',required=False)
+#'Rule1.VC'
+class ruleVisitorLeadsForm(forms.Form):
+    rulekey = 'Rule1-VC'
+    gemChoices = clubGetRuleParams(rulekey,'gem')
+    scoreChoices = clubGetRuleParams(rulekey,'score')
+  #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
+    gem = forms.ChoiceField(label='gem',choices= gemChoices)
+    score = forms.ChoiceField(label='score', choices= scoreChoices)
+    excel = forms.BooleanField(label='excel',required=False)
+    club = forms.BooleanField(label='club',required=False)
+    rulekey = forms.CharField(label='rulekey')
+
+#'Rule2.VC'
+class ruleVisitorActiveForm(forms.Form):
+    rulekey = 'Rule2-VC'
+    gemChoices = clubGetRuleParams(rulekey,'gem')
+    scoreChoices = clubGetRuleParams(rulekey,'score')
+  #  rulekey = forms.ChoiceField(label='rulekey', choices=rulekeychoices)
+    gem = forms.ChoiceField(label='gem',choices= gemChoices)
+    score = forms.ChoiceField(label='score', choices= scoreChoices)
+    excel = forms.BooleanField(label='excel',required=False)
+    club = forms.BooleanField(label='club',required=False)
+    rulekey = forms.CharField(label='rulekey')
 
 #'Rule1.CC'
 class ruleCustomerSKUCount(forms.Form):
