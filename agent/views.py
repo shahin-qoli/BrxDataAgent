@@ -102,7 +102,7 @@ def initVendor(request):
     if request.method == 'GET':
         cursor = conncetReport.cursor()
         Vendor.objects.all().delete()
-        sql = "SELECT id,name, defaultvisitor from [visit-app].[market].vendor"
+        sql = "SELECT id,name, defaultvisitor from [visit-app].[market].vendor where id <> 0"
         cursor.execute(sql)
         for bp in cursor:
             Person = PersonVen.objects.get(id=bp[0])
@@ -211,7 +211,7 @@ def initvwAllCustomerOfVisitor(request):
     if request.method == 'GET':
         vwAllCustomerOfVisitor.objects.all().delete()
         cursor = conncetReport.cursor()
-        sql = "SELECT visitorUserId,SlpCode, customercount FROM [dbo].[vwAllCustomerOfVisitor]"
+        sql = "SELECT UserId,SlpCode, customercount FROM [dbo].[vwAllCustomerOfVisitor] where slpcode is not null"
         cursor.execute(sql)
         for bp in cursor:
             # oslp = Oslp.objects.filter(slpcode=bp[0]).values('id')
@@ -224,7 +224,7 @@ def initVwLeadOfVisitor(request):
     if request.method == 'GET':
         vwLeadOfVisitor.objects.all().delete()
         cursor = conncetReport.cursor()
-        sql = "SELECT customerCardcode,visitorUserId,SlpCode, FROM [dbo].[vwLeadOfVisitor]"
+        sql = "SELECT customerCardcode,visitorUserId,SlpCode FROM [dbo].[vwLeadOfVisitor]"
         cursor.execute(sql)
         for bp in cursor:
             # oslp = Oslp.objects.filter(slpcode=bp[0]).values('id')
@@ -320,7 +320,7 @@ def renderRuleFormWoutDate(request):
 
 """
 
-
+"""
 def logicVisitorAvticeCus(request):
     rulekey = 'Rule2-VC'
     visq = VwagentActiveCustomerPerVisitor.objects.all()
@@ -342,7 +342,7 @@ def logicVisitorAvticeCus(request):
         return (exportUserAchivement(request, datalist))
 
 
-"""
+
 def logicVisitorNewCus(request):
     rulekey = request.POST['rulekey']
     basegem = int(request.POST['gem'])
@@ -398,13 +398,13 @@ def logicVisitorActiveCustomer(request):
 
             # clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
 
-    #           elif request.POST.__contains__('excel'):
-    #               data = (rulekey, bp.bpcode, basescore)
-    #               datalist.append(data)
+        elif request.POST.__contains__('excel'):
+             data = (rulekey, v.slpuserid, basescore,basegem )
+             datalist.append(data)
 
-    #  if request.POST.__contains__('excel'):
-    #     return (exportUserAchivement(request, datalist))
-    if request.POST.__contains__('club'):
+    if request.POST.__contains__('excel'):
+        return exportUserAchivement(request, datalist)
+    elif request.POST.__contains__('club'):
         clubUserAchivementCreate(create_list)
 
 # Done for new structure
@@ -440,13 +440,13 @@ def logicVisitorLeads(request):
 
             # clubUserAchivementCreate(rulekey, basescore, bp.bpcode)
 
-    #           elif request.POST.__contains__('excel'):
-    #               data = (rulekey, bp.bpcode, basescore)
-    #               datalist.append(data)
+        elif request.POST.__contains__('excel'):
+            data = (rulekey, v.slpuserid, basescore,basegem)
+            datalist.append(data)
 
-    #  if request.POST.__contains__('excel'):
-    #     return (exportUserAchivement(request, datalist))
-    if request.POST.__contains__('club'):
+    if request.POST.__contains__('excel'):
+        return (exportUserAchivement(request, datalist))
+    elif request.POST.__contains__('club'):
         clubUserAchivementCreate(create_list)
 
 
